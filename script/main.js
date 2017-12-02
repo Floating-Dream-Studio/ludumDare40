@@ -65,6 +65,7 @@ var app = playground({
             "portal"
         );
 
+        this.loadFont("duck4game");
     },
 
     ready: function() {
@@ -142,8 +143,10 @@ var app = playground({
         dr(this.captain, this);
         this.renderTimer();
         this.renderHp();
-        //this.test.draw(200, 400);
         this.portal.draw(this.ptimer.x, this.ptimer.y);
+        this.layer.fillStyle("white");
+        this.layer.font("12px duck4game");
+        this.layer.fillText("Captain", 290, 120);
     },
 
     //functions
