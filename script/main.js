@@ -88,6 +88,7 @@ var app = playground({
         if(this.ptimer.y === 540 && collide(this.player, this.ptimer)) {
             this.timerOn = true;
             this.popupTimer();
+            clearTimeout(this.back);
         }
     },
 
@@ -108,8 +109,11 @@ var app = playground({
             this.timeBeforeDrop = 30;
             this.btimer.w = this.timeBeforeDrop*135/30;
             this.popupTimer();
-            //this.askForDrop();
-            this.waveAsked = true;
+            //this.waveAsked = true;
+            this.back = setTimeout(()=>{
+                this.timerOn = true;
+                this.popupTimer();
+            }, 5000);
         }
         this.updateHp();
     },
@@ -117,10 +121,10 @@ var app = playground({
     render: function() {
         this.layer.clear('#333');
         this.layer.fillStyle("red");
-        dr(this.captain, this);
         dr(this.player, this);
         dr(this.btimer, this);
         dr(this.ptimer, this);
+        dr(this.captain, this);
         this.renderHp();
     },
 
