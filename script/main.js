@@ -6,6 +6,7 @@ var app = playground({
 
     create: function() {
         this.mouse.lock();
+        this.storage = 0;
         this.hpTable = [
             { v: 2, x: 0},
             { v: 2, x: 0},
@@ -13,8 +14,8 @@ var app = playground({
         ];
         this.hp = 6;
 
-        //platteforme
-        this.landTimer = {
+        //platteforme(avatar)
+        this.captain = {
             x: 300,
             y: 50,
             w: 50,
@@ -23,8 +24,8 @@ var app = playground({
         }
         //ship
         this.ptimer = {
-            x: 500,
-            y: 50,
+            x: 200  ,
+            y: 650,
             w: 50,
             h: 50,
             c:"green"
@@ -37,6 +38,7 @@ var app = playground({
             h: 10,
             c: "green"
         }
+
         //player's ship and data
         this.player = {
             x: 0,
@@ -62,15 +64,15 @@ var app = playground({
     },
 
     keydown: function(e) {
-        if(this.waveAsked && e.key == 'space' && !this.timerOn && this.ptimer.x === 300) {
-            this.timerOn = true;
-            this.popupTimer();
-            //store g
-            //console.log("yay")
-        } else if(this.timeBeforeDrop <= 0 && e.key == 'a'){
-            //store g
-        }
-        //console.log(e.key)
+        // if(this.waveAsked && e.key == 'space' && !this.timerOn && this.ptimer.y === 540) {
+        //     this.timerOn = true;
+        //     this.popupTimer();
+        //     //store g
+        //     //console.log("yay")
+        // } else if(this.timeBeforeDrop <= 0 && e.key == 'a'){
+        //     //store g
+        // }
+        // //console.log(e.key)
     },
 
     keyup: function(e) {
@@ -79,8 +81,13 @@ var app = playground({
 
     mousemove: function(e) {
         if(e.x > 0 && e.x < this.width) {
-            app.player.x = e.x;
-            app.player.y = e.y;
+            app.player.x = e.x - 25;
+            app.player.y = e.y - 25;
+        }
+
+        if(this.ptimer.y === 540 && collide(this.player, this.ptimer)) {
+            this.timerOn = true;
+            this.popupTimer();
         }
     },
 
@@ -110,7 +117,7 @@ var app = playground({
     render: function() {
         this.layer.clear('#333');
         this.layer.fillStyle("red");
-        //dr(this.landTimer, this);
+        dr(this.captain, this);
         dr(this.player, this);
         dr(this.btimer, this);
         dr(this.ptimer, this);
@@ -119,18 +126,22 @@ var app = playground({
 
     //functions
     popupTimer: function() {
-        if(app.ptimer.x > app.width){
+        if(app.ptimer.y > app.height){
             app.tween(app.ptimer)
-                .to({x: 300}, 0.8)
+                .to({y: 540}, 0.8)
         } else {
             app.tween(app.ptimer)
-                .to({x: 650}, 0.8)
+                .to({y: 650}, 0.8)
         }
     },
 
-    askForDrop: function(){
-
-
+    dropGold: function(){
+        this.timerOn = true;
+        if(this.player.g >= 50){
+            this.player.g -= 50;
+            this.storage += 50;
+        }
+        this.popupTimer();
     },
 
     updateHp: function(){
