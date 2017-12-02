@@ -55,6 +55,8 @@ var app = playground({
         this.waveAsked = false;
         this.gameOn = true;
 
+        this.hit = false;
+        this.heal = false;
 
         this.loadImages(
             "skulls",
@@ -86,7 +88,6 @@ var app = playground({
         //     //store g
         // }
         // //console.log(e.key)
-        console.log(app.images['skulls'])
     },
 
     keyup: function(e) {
@@ -166,17 +167,22 @@ var app = playground({
     },
 
     updateHp: function(){
-      for(var i = 0; i < this.hpTable.length; i++) {
-          var t = this.hpTable[i];
-          t.x = t.v * 40;
-      }
+        for(var i = 0; i < this.hpTable.length; i++) {
+            var t = this.hpTable[i];
+            t.x = t.v * 40;
+        }
     },
 
     renderHp: function(){
-      for(var i = 0; i < this.hpTable.length; i++) {
-          var t = this.hpTable[i];
-          this.layer.drawImage(this.images["skulls"], t.x, 0, 40, 40, 25 + i * 45, 50, 40, 40);
-      }
+        for(var i = 0; i < this.hpTable.length; i++) {
+            if(this.hit) {
+                this.layer.drawImage(this.images["skulls"], 120, 0, 40, 40, 25 + i * 45, 50, 40, 40);
+            } else if (this.heal) {
+                this.layer.drawImage(this.images["skulls"], 160, 0, 40, 40, 25 + i * 45, 50, 40, 40);
+            }
+            var t = this.hpTable[i];
+            this.layer.drawImage(this.images["skulls"], t.x, 0, 40, 40, 25 + i * 45, 50, 40, 40);
+        }
     },
 
     renderTimer: function() {
@@ -184,6 +190,40 @@ var app = playground({
         this.layer.drawImage(this.images["timeBar"], 125, 10);
         this.layer.fillStyle('#333');
         this.layer.fillRect(265 - (136-this.btimer.w), 15, 136-this.btimer.w, 20);
+    },
+
+    hpp: function() {
+        var i = 0;
+        while( i < this.hpTable.length) {
+            if(this.hpTable[i].v < 2){
+                this.hpTable[i].v += 1;
+                this.updateHp();
+                this.heal = true;
+                setTimeout(()=>{
+                    this.heal = false;
+                }, 100);
+                return;
+            }
+            i++;
+        }
+        return 'full';
+    },
+
+    hpm: function() {
+        var i = this.hpTable.length;
+        while( i > 0) {
+            i--;
+            if(this.hpTable[i].v >= 1){
+                this.hpTable[i].v -= 1;
+                this.updateHp();
+                this.hit = true;
+                setTimeout(()=>{
+                    this.hit = false;
+                }, 100);
+                return;
+            }
+        }
+        return 'dead';
     },
 
     death: function(){
