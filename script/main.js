@@ -55,12 +55,21 @@ var app = playground({
         this.waveAsked = false;
         this.gameOn = true;
 
+
         this.loadImages(
             "skulls",
             "timeBar",
-            "timeBarFrame"
-    );
+            "timeBarFrame",
+            "portal"
+        );
 
+    },
+
+    ready: function() {
+        //this.test = new Animation("skulls", 100, 0, 0, 40, 40);
+        //this.test.animate();
+        this.portal = new Animation("portal", 100, 0, 0, 50, 50);
+        this.portal.animate();
     },
 
     option: function() {
@@ -77,6 +86,7 @@ var app = playground({
         //     //store g
         // }
         // //console.log(e.key)
+        console.log(app.images['skulls'])
     },
 
     keyup: function(e) {
@@ -126,14 +136,13 @@ var app = playground({
         this.layer.clear('#333');
         this.layer.fillStyle("red");
         dr(this.player, this);
-        dr(this.btimer, this);
-        dr(this.ptimer, this);
+        //dr(this.btimer, this);
+        //dr(this.ptimer, this);
         dr(this.captain, this);
-        this.layer.drawImage(this.images["timeBarFrame"], this.width/2-75, 10);
-        this.layer.drawImage(this.images["timeBar"], 125, 10);
-        this.layer.fillStyle('#333');
-        this.layer.fillRect(265 - (136-this.btimer.w), 15, 136-this.btimer.w, 20);
+        this.renderTimer();
         this.renderHp();
+        //this.test.draw(200, 400);
+        this.portal.draw(this.ptimer.x, this.ptimer.y);
     },
 
     //functions
@@ -168,6 +177,13 @@ var app = playground({
           var t = this.hpTable[i];
           this.layer.drawImage(this.images["skulls"], t.x, 0, 40, 40, 25 + i * 45, 50, 40, 40);
       }
+    },
+
+    renderTimer: function() {
+        this.layer.drawImage(this.images["timeBarFrame"], this.width/2-75, 10);
+        this.layer.drawImage(this.images["timeBar"], 125, 10);
+        this.layer.fillStyle('#333');
+        this.layer.fillRect(265 - (136-this.btimer.w), 15, 136-this.btimer.w, 20);
     },
 
     death: function(){
