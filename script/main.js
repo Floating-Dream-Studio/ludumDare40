@@ -55,7 +55,11 @@ var app = playground({
         this.waveAsked = false;
         this.gameOn = true;
 
-        this.loadImages("skulls");
+        this.loadImages(
+            "skulls",
+            "timeBar",
+            "timeBarFrame"
+    );
 
     },
 
@@ -103,11 +107,11 @@ var app = playground({
     step: function(dt) {
         if(this.timeBeforeDrop > 0 && this.timerOn){
             this.timeBeforeDrop -= 1*dt;
-            this.btimer.w = this.timeBeforeDrop*135/30;
+            this.btimer.w = this.timeBeforeDrop*136/30;
         }else if(this.timeBeforeDrop <= 0) {
             this.timerOn = false;
             this.timeBeforeDrop = 30;
-            this.btimer.w = this.timeBeforeDrop*135/30;
+            this.btimer.w = this.timeBeforeDrop*136/30;
             this.popupTimer();
             //this.waveAsked = true;
             this.back = setTimeout(()=>{
@@ -125,6 +129,10 @@ var app = playground({
         dr(this.btimer, this);
         dr(this.ptimer, this);
         dr(this.captain, this);
+        this.layer.drawImage(this.images["timeBarFrame"], this.width/2-75, 10);
+        this.layer.drawImage(this.images["timeBar"], 125, 10);
+        this.layer.fillStyle('#333');
+        this.layer.fillRect(265 - (136-this.btimer.w), 15, 136-this.btimer.w, 20);
         this.renderHp();
     },
 
@@ -158,7 +166,7 @@ var app = playground({
     renderHp: function(){
       for(var i = 0; i < this.hpTable.length; i++) {
           var t = this.hpTable[i];
-          this.layer.drawImage(this.images["skulls"], t.x, 0, 40, 40, 25 + i * 45, 25, 40, 40);
+          this.layer.drawImage(this.images["skulls"], t.x, 0, 40, 40, 25 + i * 45, 50, 40, 40);
       }
     },
 
