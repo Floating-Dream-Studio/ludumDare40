@@ -59,8 +59,6 @@ var app = playground({
     render: function() {
         this.layer.clear('#333');
         this.layer.fillStyle("red");
-        //this.layer.fillRect(this.ptimer.x, this.ptimer.y, this.ptimer.w, this.ptimer.h);
-        //this.layer.fillRect(this.pnjTimer.x, this.pnjTimer.y, this.pnjTimer.w, this.pnjTimer.h);
         dr(this.pnjTimer, this);
         dr(this.player, this);
     },
