@@ -63,8 +63,9 @@ var app = playground({
         this.bullets = [];
 
         this.ennemies = [];
-        this.lvlCel = 100;
+        this.lvlCel = 30;
 
+        this.maxTime = 15;
         this.timeBeforeDrop = 3;
         //this.waveChecked = false;
         this.timerOn = true;
@@ -108,9 +109,10 @@ var app = playground({
         this.spawner = setInterval(()=>{
             this.popEnnemy();
         }, 5000);
+
         this.gun = setInterval(()=>{
             this.shot();
-        }, 600);
+        }, 400);
     },
 
     option: function() {
@@ -147,14 +149,14 @@ var app = playground({
             this.updateBullets(dt);
             if(this.timeBeforeDrop > 0 && this.timerOn){
                 this.timeBeforeDrop -= 1*dt;
-                this.btimer.w = this.timeBeforeDrop*136/30;
+                this.btimer.w = this.timeBeforeDrop*136/this.maxTime;
             } else if (this.timeBeforeDrop <= 0) {
                 this.timerOn = false;
                 this.captain.show = true;
                 setTimeout(()=>{
                     this.captainState = "captainFace";
                 }, 1200)
-                this.timeBeforeDrop = 30;
+                this.timeBeforeDrop = this.maxTime;
                 this.btimer.w = this.timeBeforeDrop*136/30;
                 this.popupTimer();
                 this.captainSpawn.animate();
@@ -181,13 +183,13 @@ var app = playground({
         this.renderHp();
         this.captainDisplay.draw(this.captain.x, this.captain.y);
         this.portal.draw(this.ptimer.x, this.ptimer.y);
+        this.drawEnnemies();
         if(this.captain.show) {
             this.layer.fillStyle("white");
             this.layer.font("12px duck4game");
-            this.layer.fillText("Captain", 290, 120);
+            this.layer.fillText("Captain", 290, 140);
             this[this.captainState].draw(this.captain.x, this.captain.y);
         }
-        this.drawEnnemies();
         if(!this.gameOn) {
             this.layer.save();
             this.layer.a(0.8);
@@ -214,10 +216,13 @@ var app = playground({
     dropGold: function(){
         this.timerOn = true;
         if(this.player.g >= 50){
-            this.player.g -= 150;
-            this.storage += 150;
+            this.storage += this.player.g;
+            this.player.g = 0;
         }
+        this.slowDown();
         this.popupTimer();
+        this.goldRatio = 5000;
+        this.resetSpanwer();
     },
 
     updateHp: function(){
@@ -333,16 +338,14 @@ var app = playground({
                     var y1 = this.ennemies[a].y + 50;
                     var x2 = this.bullets[i].x + 5;
                     var y2 = this.bullets[i].y + 5;
-                    if(dist(x1, y1, x2, y2) <= 20 && this.bullets[i].show) {
+                    if(dist(x1, y1, x2, y2) <= 20 && this.bullets[i].show && this.ennemies[a].sta === "anim1") {
                         this.bullets[i].show = false;
                         this.player.g += 10;
-                        console.log("g")
+                        //console.log("g")
                         this.ennemies[a].cel = 0;
                         this.ennemies[a].death();
-                        this.spawner = setTimeout(()=>{
-                            this.popEnnemy();
-                            this.increaseSpeed();
-                        }, 1000/(this.player.gold/10));
+                        this.goldRatio -= this.player.g;
+                        this.resetSpanwer();
                     }
                 }
             }
@@ -363,8 +366,20 @@ var app = playground({
         this.lvlCel += 1;
     },
 
+    slowDown: function() {
+        for(var i = 0; i < this.ennemies.length; i++) {
+            this.ennemies[i].cel = 20;
+        }
+    },
+
+    resetSpanwer: function() {
+        this.spawner = setTimeout(()=>{
+            this.popEnnemy();
+        }, this.goldRatio)
+    },
+
     death: function() {
-        this.tween(this.dpopup);
+        this.tween(this.dpopup)
             .to({y: 100}, 0.3);
         clearInterval(this.spawner);
         clearInterval(this.gun);
