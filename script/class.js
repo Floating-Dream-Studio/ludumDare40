@@ -101,7 +101,7 @@ class Bullet{
     }
 
     update(dt) {
-        this.y -=  200*dt;
+        this.y -=  250*dt;
     }
 
     draw() {

@@ -77,7 +77,9 @@ var app = playground({
             "Enemy_1_Flight",
             "Enemy_1_Death",
             "Ship_1_Flight",
-            "Captain_Display"
+            "Captain_Display",
+            "Captain_1_Friendly",
+            "Bullet"
         );
 
         this.loadFont("duck4game");
@@ -86,6 +88,8 @@ var app = playground({
     ready: function() {
         this.test = new Animation("Ship_1_Flight", 100, 0, 0, 100, 100);
         this.test.animate();
+        this.bul = new Animation("Bullet", 100, 0, 0, 10, 10);
+        this.bul.animate();
         this.portal = new Animation("portal", 100, 0, 0, 50, 50);
         this.portal.animate();
         this.popEnnemy();
@@ -207,8 +211,11 @@ var app = playground({
 
     renderBarGold: function() {
         var w = this.player.g * 50 / 300;
+        if(this.player.g >= 300) {
+            w = 50;
+        }
         this.layer.fillStyle("yellow");
-        this.layer.fillRect(this.player.x, this.player.y + 110, w, 10);
+        this.layer.fillRect(this.player.x + 25, this.player.y + 110, w, 10);
     },
 
     renderTimer: function() {
@@ -261,7 +268,7 @@ var app = playground({
     updateEnnemies: function(dt) {
         for(var i = this.ennemies.length-1; i >= 0; i--) {
             this.ennemies[i].update(dt);
-            if(this.ennemies[i].y > this.height - 200 && this.ennemies[i].sta === "anim1"){
+            if(this.ennemies[i].y > this.height - 200 && this.ennemies[i].sta === "anim1") {
                 this.ennemies[i].death();
                 this.ennemies[i].cel = 0;
                 this.hpm();
@@ -299,6 +306,7 @@ var app = playground({
                         var y2 = this.bullets[i].y + 5;
                         if(dist(x1, y1, x2, y2) <= 20 && this.bullets[i].show) {
                             this.bullets[i].show = false;
+                            this.player.g += 10;
                             this.ennemies[a].cel = 0;
                             this.ennemies[a].death();
                         }
@@ -310,7 +318,8 @@ var app = playground({
 
     drawBullets() {
         for (var i = 0; i < this.bullets.length; i++) {
-            this.bullets[i].draw();
+            //this.bullets[i].draw();
+            this.bul.draw(this.bullets[i].x, this.bullets[i].y)
         }
     },
 
