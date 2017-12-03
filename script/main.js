@@ -23,7 +23,7 @@ var app = playground({
             c: "cyan",
             show: false
         }
-
+        this.captainState = "captainSpawn";
         //ship
         this.ptimer = {
             x: 200,
@@ -95,6 +95,10 @@ var app = playground({
         this.popEnnemy();
         this.captainDisplay = new Animation("Captain_Display", 100, 0, 0, 50, 50);
         this.captainDisplay.animate();
+        this.captainFace = new Animation("Captain_1_Friendly", 200, 300, 0, 50, 50);
+        this.captainFace.animate();
+        this.captainSpawn = new Animation("Captain_1_Friendly", 200, 0, 0, 50, 50, 6);
+        this.captainSpawn.animate();
         this.spawner = setInterval(()=>{
             this.popEnnemy();
         }, 1000);
@@ -115,6 +119,8 @@ var app = playground({
 
         if(this.ptimer.y === 540 && collide(this.player, this.ptimer)) {
             this.timerOn = true;
+            this.captain.show = false;
+            this.captainState = "captainSpawn";
             this.popupTimer();
             clearTimeout(this.back);
             this.dropGold();
@@ -138,11 +144,17 @@ var app = playground({
                 this.btimer.w = this.timeBeforeDrop*136/30;
             } else if (this.timeBeforeDrop <= 0) {
                 this.timerOn = false;
+                this.captain.show = true;
+                setTimeout(()=>{
+                    this.captainState = "captainFace";
+                }, 800)
                 this.timeBeforeDrop = 30;
                 this.btimer.w = this.timeBeforeDrop*136/30;
                 this.popupTimer();
                 this.back = setTimeout(()=>{
                     this.timerOn = true;
+                    this.captain.show = false;
+                    this.captainState = "captainSpawn";
                     this.popupTimer();
                 }, 5000);
             }
@@ -156,7 +168,7 @@ var app = playground({
         //dr(this.player, this);
         this.test.draw(this.player.x, this.player.y);
         this.drawBullets();
-        dr(this.captain, this);
+        //dr(this.captain, this);
         this.renderTimer();
         this.renderBarGold();
         this.renderHp();
@@ -166,6 +178,7 @@ var app = playground({
             this.layer.fillStyle("white");
             this.layer.font("12px duck4game");
             this.layer.fillText("Captain", 290, 120);
+            this[this.captainState].draw(this.captain.x, this.captain.y);
         }
         this.drawEnnemies();
     },
@@ -293,25 +306,25 @@ var app = playground({
 
     updateBullets: function(dt) {
         for(var i = this.bullets.length-1; i >= 0; i--) {
-                this.bullets[i].update(dt);
+            this.bullets[i].update(dt);
 
-                if(this.bullets[i].y < 0) {
-                    this.bullets.splice(i, 1);
-                } else {
-                    for(var a = 0; a < this.ennemies.length; a++) {
-                        //console.log(this.bullets[i].x)
-                        var x1 = this.ennemies[a].x + 50;
-                        var y1 = this.ennemies[a].y + 50;
-                        var x2 = this.bullets[i].x + 5;
-                        var y2 = this.bullets[i].y + 5;
-                        if(dist(x1, y1, x2, y2) <= 20 && this.bullets[i].show) {
-                            this.bullets[i].show = false;
-                            this.player.g += 10;
-                            this.ennemies[a].cel = 0;
-                            this.ennemies[a].death();
-                        }
+            if(this.bullets[i].y < 0) {
+                this.bullets.splice(i, 1);
+            } else {
+                for(var a = 0; a < this.ennemies.length; a++) {
+                    //console.log(this.bullets[i].x)
+                    var x1 = this.ennemies[a].x + 50;
+                    var y1 = this.ennemies[a].y + 50;
+                    var x2 = this.bullets[i].x + 5;
+                    var y2 = this.bullets[i].y + 5;
+                    if(dist(x1, y1, x2, y2) <= 20 && this.bullets[i].show) {
+                        this.bullets[i].show = false;
+                        this.player.g += 10;
+                        this.ennemies[a].cel = 0;
+                        this.ennemies[a].death();
                     }
                 }
+            }
 
         }
     },
