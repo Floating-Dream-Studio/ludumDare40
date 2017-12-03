@@ -86,7 +86,8 @@ var app = playground({
             "Ship_1_Flight",
             "Captain_Display",
             "Captain_1_Friendly",
-            "Bullet"
+            "Bullet",
+            "PLANETES"
         );
 
         this.loadFont("duck4game");
@@ -173,6 +174,7 @@ var app = playground({
 
     render: function() {
         this.layer.clear('#333');
+        di("PLANETES", 0, 0);
         this.layer.fillStyle("red");
         //dr(this.player, this);
         this.test.draw(this.player.x, this.player.y);
