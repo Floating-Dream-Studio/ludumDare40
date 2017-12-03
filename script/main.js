@@ -73,7 +73,8 @@ var app = playground({
             "timeBarFrame",
             "portal",
             "Ship",
-            "Enemy_1_Flight"
+            "Enemy_1_Flight",
+            "Enemy_1_Death"
         );
 
         this.loadFont("duck4game");
@@ -146,7 +147,7 @@ var app = playground({
     render: function() {
         this.layer.clear('#333');
         this.layer.fillStyle("red");
-        dr(this.player, this);
+        //dr(this.player, this);
         this.test.draw(this.player.x, this.player.y);
         dr(this.captain, this);
         this.renderTimer();
@@ -255,10 +256,15 @@ var app = playground({
     },
 
     updateEnnemies: function(dt) {
-        for(var i = 0; i < this.ennemies.length; i++) {
+        for(var i = this.ennemies.length-1; i >= 0; i--) {
             this.ennemies[i].update(dt);
-            if(this.ennemies[i].y > this.height){
+            if(this.ennemies[i].y > this.height - 200 && this.ennemies[i].sta === "anim1"){
+                this.ennemies[i].death();
+                this.ennemies[i].cel = 0;
+            }
+            if(this.ennemies[i].dead) {
                 this.ennemies.splice(i, 1);
+                console.log("dead")
             }
         }
     },

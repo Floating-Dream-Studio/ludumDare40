@@ -46,11 +46,12 @@ class Ennemy {
     constructor() {
         this.x = Math.floor((Math.random()*4)) * 100;
         this.y = 100;
-        this.cel = Math.floor((Math.random()*10)+10);
-        this.anim1 = new Animation("Enemy_1_Flight", 100, 700, 0, 100, 100, 3);
-        this.anim2 = new Animation("Enemy_1_Flight", 100, 700, 0, 100, 100, 3);
+        this.cel = Math.floor((Math.random()*10))+30;
+        this.anim1 = new Animation("Enemy_1_Flight", 100, 0, 0, 100, 100);
+        this.anim2 = new Animation("Enemy_1_Death", 100, 0, 0, 100, 100);
         this.anim1.animate();
         this.sta = "anim1";
+        this.dead = false;
     }
 
     update(dt) {
@@ -67,10 +68,12 @@ class Ennemy {
 
     death() {
         this.anim1.cancel();
+        this.sta = "anim2";
         this.anim2.animate();
         setTimeout(()=> {
             this.anim2.cancel();
-        }, 1000)
+            this.dead = true;
+        }, 500)
     }
 }
 
