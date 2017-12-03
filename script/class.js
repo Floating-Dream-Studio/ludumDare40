@@ -97,6 +97,7 @@ class Bullet{
         this.y = y;
         this.w = 10;
         this.h = 10;
+        this.show = true;
     }
 
     update(dt) {
@@ -104,7 +105,9 @@ class Bullet{
     }
 
     draw() {
-        app.layer.fillStyle("red");
-        app.layer.fillRect(this.x, this.y, 10, 10);
+        if(this.show) {
+            app.layer.fillStyle("red");
+            app.layer.fillRect(this.x, this.y, 10, 10);
+        }
     }
 }

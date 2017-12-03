@@ -268,7 +268,6 @@ var app = playground({
             }
             if(this.ennemies[i].dead) {
                 this.ennemies.splice(i, 1);
-                console.log("dead")
             }
         }
     },
@@ -280,29 +279,32 @@ var app = playground({
     },
 
     shot() {
-        var x = this.player.x;
+        var x = this.player.x + 45;
         var y = this.player.y;
         this.bullets.push(new Bullet(x, y));
     },
 
     updateBullets: function(dt) {
         for(var i = this.bullets.length-1; i >= 0; i--) {
-            this.bullets[i].update(dt);
-            for(var a = 0; a < this.ennemies.length; a++) {
-                var x1 = this.ennemies[a].x + 50;
-                var y1 = this.ennemies[a].y + 50;
-                var x2 = this.bullets[i].x + 5;
-                var y2 = this.bullets[i].y + 5;
-                if(dist(x1, y1, x2, y2) <= 20 ) {
-                    this.bullets.splice(i, 1);
-                    this.ennemies[a].cel = 0;
-                    this.ennemies[a].death();
-                }
-            }
+                this.bullets[i].update(dt);
 
-            if(this.bullets[i].y < 0) {
-                this.bullets.splice(i, 1);
-            }
+                if(this.bullets[i].y < 0) {
+                    this.bullets.splice(i, 1);
+                } else {
+                    for(var a = 0; a < this.ennemies.length; a++) {
+                        //console.log(this.bullets[i].x)
+                        var x1 = this.ennemies[a].x + 50;
+                        var y1 = this.ennemies[a].y + 50;
+                        var x2 = this.bullets[i].x + 5;
+                        var y2 = this.bullets[i].y + 5;
+                        if(dist(x1, y1, x2, y2) <= 20 && this.bullets[i].show) {
+                            this.bullets[i].show = false;
+                            this.ennemies[a].cel = 0;
+                            this.ennemies[a].death();
+                        }
+                    }
+                }
+
         }
     },
 
