@@ -52,7 +52,7 @@ class Ennemy {
     constructor() {
         this.x = Math.floor((Math.random()*4)) * 100;
         this.y = 100;
-        this.cel = Math.floor((Math.random()*10))+30;
+        this.cel = Math.floor((Math.random()*app.lvlCel))+30;
         this.anim1 = new Animation("Enemy_1_Flight", 100, 0, 0, 100, 100);
         this.anim2 = new Animation("Enemy_1_Death", 100, 0, 0, 100, 100);
         this.anim1.animate();

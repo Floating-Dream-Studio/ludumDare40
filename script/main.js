@@ -16,8 +16,8 @@ var app = playground({
 
         //platteforme(avatar)
         this.captain = {
-            x: 300,
-            y: 40,
+            x: 275,
+            y: 25,
             w: 50,
             h: 50,
             c: "cyan",
@@ -51,13 +51,13 @@ var app = playground({
             w: 100,
             h: 100,
             c:"red",
-            g: 300,
+            g: 0,
             show: true
         }
         this.bullets = [];
 
         this.ennemies = [];
-        this.goldRatio = 5000;
+        this.lvlCel = 100;
 
         this.timeBeforeDrop = 3;
         //this.waveChecked = false;
@@ -93,18 +93,18 @@ var app = playground({
         this.portal = new Animation("portal", 100, 0, 0, 50, 50);
         this.portal.animate();
         this.popEnnemy();
-        this.captainDisplay = new Animation("Captain_Display", 100, 0, 0, 50, 50);
+        this.captainDisplay = new Animation("Captain_Display", 100, 0, 0, 100, 100);
         this.captainDisplay.animate();
-        this.captainFace = new Animation("Captain_1_Friendly", 200, 300, 0, 50, 50);
+        this.captainFace = new Animation("Captain_1_Friendly", 200, 600, 0, 100, 100);
         this.captainFace.animate();
-        this.captainSpawn = new Animation("Captain_1_Friendly", 200, 0, 0, 50, 50, 6, true);
+        this.captainSpawn = new Animation("Captain_1_Friendly", 200, 0, 0, 100, 100, 6, true);
         //this.captainSpawn.animate();
         this.spawner = setInterval(()=>{
             this.popEnnemy();
-        }, 1000);
+        }, 5000);
         this.gun = setInterval(()=>{
             this.shot();
-        }, 300);
+        }, 600);
     },
 
     option: function() {
@@ -198,8 +198,8 @@ var app = playground({
     dropGold: function(){
         this.timerOn = true;
         if(this.player.g >= 50){
-            this.player.g -= 50;
-            this.storage += 50;
+            this.player.g -= 150;
+            this.storage += 150;
         }
         this.popupTimer();
     },
@@ -282,7 +282,7 @@ var app = playground({
     updateEnnemies: function(dt) {
         for(var i = this.ennemies.length-1; i >= 0; i--) {
             this.ennemies[i].update(dt);
-            if(this.ennemies[i].y > this.height - 200 && this.ennemies[i].sta === "anim1") {
+            if(this.ennemies[i].y > this.height - 100 /*- 250*/ && this.ennemies[i].sta === "anim1") {
                 this.ennemies[i].death();
                 this.ennemies[i].cel = 0;
                 this.hpm();
@@ -319,19 +319,31 @@ var app = playground({
                     if(dist(x1, y1, x2, y2) <= 20 && this.bullets[i].show) {
                         this.bullets[i].show = false;
                         this.player.g += 10;
+                        console.log("g")
                         this.ennemies[a].cel = 0;
                         this.ennemies[a].death();
+                        this.spawner = setTimeout(()=>{
+                            this.popEnnemy();
+                            this.increaseSpeed();
+                        }, 1000/(this.player.gold/10));
                     }
                 }
             }
         }
     },
 
-    drawBullets() {
+    drawBullets: function() {
         for (var i = 0; i < this.bullets.length; i++) {
             //this.bullets[i].draw();
             this.bul.draw(this.bullets[i].x, this.bullets[i].y)
         }
+    },
+
+    increaseSpeed: function() {
+        for(var i = 0; i < this.ennemies.length; i++) {
+            this.ennemies[i].cel += 1;
+        }
+        this.lvlCel += 1;
     },
 
     death: function(){
