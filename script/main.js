@@ -97,8 +97,8 @@ var app = playground({
         this.captainDisplay.animate();
         this.captainFace = new Animation("Captain_1_Friendly", 200, 300, 0, 50, 50);
         this.captainFace.animate();
-        this.captainSpawn = new Animation("Captain_1_Friendly", 200, 0, 0, 50, 50, 6);
-        this.captainSpawn.animate();
+        this.captainSpawn = new Animation("Captain_1_Friendly", 200, 0, 0, 50, 50, 6, true);
+        //this.captainSpawn.animate();
         this.spawner = setInterval(()=>{
             this.popEnnemy();
         }, 1000);
@@ -147,10 +147,11 @@ var app = playground({
                 this.captain.show = true;
                 setTimeout(()=>{
                     this.captainState = "captainFace";
-                }, 800)
+                }, 1200)
                 this.timeBeforeDrop = 30;
                 this.btimer.w = this.timeBeforeDrop*136/30;
                 this.popupTimer();
+                this.captainSpawn.animate();
                 this.back = setTimeout(()=>{
                     this.timerOn = true;
                     this.captain.show = false;
@@ -307,12 +308,10 @@ var app = playground({
     updateBullets: function(dt) {
         for(var i = this.bullets.length-1; i >= 0; i--) {
             this.bullets[i].update(dt);
-
             if(this.bullets[i].y < 0) {
                 this.bullets.splice(i, 1);
             } else {
                 for(var a = 0; a < this.ennemies.length; a++) {
-                    //console.log(this.bullets[i].x)
                     var x1 = this.ennemies[a].x + 50;
                     var y1 = this.ennemies[a].y + 50;
                     var x2 = this.bullets[i].x + 5;
@@ -325,7 +324,6 @@ var app = playground({
                     }
                 }
             }
-
         }
     },
 

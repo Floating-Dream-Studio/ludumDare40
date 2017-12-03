@@ -8,13 +8,14 @@ class Point {
 }
 
 class Animation {
-    constructor(image, delay, sx, sy, w, h, maxf) {
+    constructor(image, delay, sx, sy, w, h, maxf, stop) {
         this.image = image;
         this.ax = sx;
         this.ay = sy;
         this.sx = sx;
         this.w = w;
         this.h = h;
+        this.stop = stop;
         this.tw = app.images[this.image].width;
         if(maxf){
             this.tw = this.sx + maxf*this.w;
@@ -27,7 +28,12 @@ class Animation {
             if(this.ax + this.w < this.tw) {
                 this.ax += this.w;
             } else {
-                this.ax = this.sx;
+                if(this.stop){
+                    console.log("stop")
+                    this.cancel();
+                } else {
+                    this.ax = this.sx;
+                }
             }
         }, this.delay);
     }
