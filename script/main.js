@@ -14,6 +14,12 @@ var app = playground({
         ];
         this.hp = 6;
 
+        this.dpopup = {
+            x: 50,
+            y: -300,
+            w: 350,
+            h: 150
+        }
         //platteforme(avatar)
         this.captain = {
             x: 275,
@@ -182,6 +188,16 @@ var app = playground({
             this[this.captainState].draw(this.captain.x, this.captain.y);
         }
         this.drawEnnemies();
+        if(!this.gameOn) {
+            this.layer.save();
+            this.layer.a(0.8);
+            this.layer.fillStyle("black")
+            this.layer.fillRect(0, 0, this.width, this.height);
+            this.layer.restore();
+            this.layer.fillStyle("red");
+            this.layer.fillRect(this.dpopup.x, this.dpopup.y, 300, 300);
+        }
+
     },
 
     //functions
@@ -270,6 +286,7 @@ var app = playground({
                 return;
             }
         }
+        this.death();
         return 'dead';
     },
 
@@ -346,7 +363,11 @@ var app = playground({
         this.lvlCel += 1;
     },
 
-    death: function(){
-
+    death: function() {
+        this.tween(this.dpopup);
+            .to({y: 100}, 0.3);
+        clearInterval(this.spawner);
+        clearInterval(this.gun);
+        this.gameOn = false;
     }
 })
