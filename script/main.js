@@ -17,7 +17,7 @@ var app = playground({
         //platteforme(avatar)
         this.captain = {
             x: 300,
-            y: 50,
+            y: 40,
             w: 50,
             h: 50,
             c: "cyan",
@@ -48,12 +48,13 @@ var app = playground({
         this.player = {
             x: 0,
             y: 400,
-            w: 50,
-            h: 50,
+            w: 100,
+            h: 100,
             c:"red",
             g: 300,
             show: true
         }
+        this.bullets = [];
 
         this.ennemies = [];
         this.goldRatio = 5000;
@@ -74,38 +75,38 @@ var app = playground({
             "portal",
             "Ship",
             "Enemy_1_Flight",
-            "Enemy_1_Death"
+            "Enemy_1_Death",
+            "Ship_1_Flight",
+            "Captain_Display"
         );
 
         this.loadFont("duck4game");
     },
 
     ready: function() {
-        this.test = new Animation("Ship", 100, 0, 0, 50, 50);
+        this.test = new Animation("Ship_1_Flight", 100, 0, 0, 100, 100);
         this.test.animate();
         this.portal = new Animation("portal", 100, 0, 0, 50, 50);
         this.portal.animate();
+        this.popEnnemy();
+        this.captainDisplay = new Animation("Captain_Display", 100, 0, 0, 50, 50);
+        this.captainDisplay.animate();
         this.spawner = setInterval(()=>{
             this.popEnnemy();
-        }, 5000)
+        }, 1000);
+        this.gun = setInterval(()=>{
+            this.shot();
+        }, 300);
     },
 
     option: function() {
 
     },
 
-    keydown: function(e) {
-
-    },
-
-    keyup: function(e) {
-
-    },
-
     mousemove: function(e) {
         if(e.x > 0 && e.x < this.width) {
-            app.player.x = e.x - 25;
-            app.player.y = e.y - 25;
+            app.player.x = e.x - 50;
+            app.player.y = e.y - 50;
         }
 
         if(this.ptimer.y === 540 && collide(this.player, this.ptimer)) {
@@ -127,6 +128,7 @@ var app = playground({
     step: function(dt) {
         if(this.gameOn) {
             this.updateEnnemies(dt);
+            this.updateBullets(dt);
             if(this.timeBeforeDrop > 0 && this.timerOn){
                 this.timeBeforeDrop -= 1*dt;
                 this.btimer.w = this.timeBeforeDrop*136/30;
@@ -149,12 +151,14 @@ var app = playground({
         this.layer.fillStyle("red");
         //dr(this.player, this);
         this.test.draw(this.player.x, this.player.y);
+        this.drawBullets();
         dr(this.captain, this);
         this.renderTimer();
         this.renderBarGold();
         this.renderHp();
+        this.captainDisplay.draw(this.captain.x, this.captain.y);
         this.portal.draw(this.ptimer.x, this.ptimer.y);
-        if(!this.captain.show) {
+        if(this.captain.show) {
             this.layer.fillStyle("white");
             this.layer.font("12px duck4game");
             this.layer.fillText("Captain", 290, 120);
@@ -204,7 +208,7 @@ var app = playground({
     renderBarGold: function() {
         var w = this.player.g * 50 / 300;
         this.layer.fillStyle("yellow");
-        this.layer.fillRect(this.player.x, this.player.y + 60, w, 10);
+        this.layer.fillRect(this.player.x, this.player.y + 110, w, 10);
     },
 
     renderTimer: function() {
@@ -249,10 +253,9 @@ var app = playground({
     },
 
     popEnnemy: function() {
-        var r = Math.floor((Math.random() * 1000) + 1 );
-        //if( r <= 10 ) {
-            this.ennemies.push(new Ennemy());
-        //}
+        // var r = Math.floor((Math.random() * 1000) + 1 );
+        this.ennemies.push(new Ennemy());
+
     },
 
     updateEnnemies: function(dt) {
@@ -261,6 +264,7 @@ var app = playground({
             if(this.ennemies[i].y > this.height - 200 && this.ennemies[i].sta === "anim1"){
                 this.ennemies[i].death();
                 this.ennemies[i].cel = 0;
+                this.hpm();
             }
             if(this.ennemies[i].dead) {
                 this.ennemies.splice(i, 1);
@@ -272,6 +276,39 @@ var app = playground({
     drawEnnemies: function() {
         for(var i = this.ennemies.length-1; i >= 0; i--) {
             this.ennemies[i].draw();
+        }
+    },
+
+    shot() {
+        var x = this.player.x;
+        var y = this.player.y;
+        this.bullets.push(new Bullet(x, y));
+    },
+
+    updateBullets: function(dt) {
+        for(var i = this.bullets.length-1; i >= 0; i--) {
+            this.bullets[i].update(dt);
+            for(var a = 0; a < this.ennemies.length; a++) {
+                var x1 = this.ennemies[a].x + 50;
+                var y1 = this.ennemies[a].y + 50;
+                var x2 = this.bullets[i].x + 5;
+                var y2 = this.bullets[i].y + 5;
+                if(dist(x1, y1, x2, y2) <= 20 ) {
+                    this.bullets.splice(i, 1);
+                    this.ennemies[a].cel = 0;
+                    this.ennemies[a].death();
+                }
+            }
+
+            if(this.bullets[i].y < 0) {
+                this.bullets.splice(i, 1);
+            }
+        }
+    },
+
+    drawBullets() {
+        for (var i = 0; i < this.bullets.length; i++) {
+            this.bullets[i].draw();
         }
     },
 

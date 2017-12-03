@@ -90,3 +90,21 @@ class Spawner{
         }, app.goldRatio);
     }
 }
+
+class Bullet{
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.w = 10;
+        this.h = 10;
+    }
+
+    update(dt) {
+        this.y -=  200*dt;
+    }
+
+    draw() {
+        app.layer.fillStyle("red");
+        app.layer.fillRect(this.x, this.y, 10, 10);
+    }
+}
