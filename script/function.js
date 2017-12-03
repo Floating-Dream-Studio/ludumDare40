@@ -1,8 +1,15 @@
 
 // functions
 function dr(obj, app) {
-    app.layer.fillStyle(obj.c);
-    app.layer.fillRect(obj.x, obj.y, obj.w, obj.h);
+    if(obj.show) {
+        app.layer.fillStyle(obj.c);
+        app.layer.fillRect(obj.x, obj.y, obj.w, obj.h);
+    }
+}
+
+function di(img, x, y) {
+    var ims = app.images[img];
+    app.layer.drawImage(ims, x, y);
 }
 
 function collide(box1, box2) {

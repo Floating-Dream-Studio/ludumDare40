@@ -20,23 +20,28 @@ var app = playground({
             y: 50,
             w: 50,
             h: 50,
-            c: "cyan"
+            c: "cyan",
+            show: false
         }
+
         //ship
         this.ptimer = {
-            x: 200  ,
+            x: 200,
             y: 650,
             w: 50,
             h: 50,
-            c:"green"
+            c:"green",
+            show: true
         }
+
         //time bar
         this.btimer = {
             x: this.width/2 - (135/2),
             y: 10,
             w: 135,
             h: 10,
-            c: "green"
+            c: "green",
+            show: true
         }
 
         //player's ship and data
@@ -46,8 +51,12 @@ var app = playground({
             w: 50,
             h: 50,
             c:"red",
-            g: 0,
+            g: 300,
+            show: true
         }
+
+        this.ennemies = [];
+        this.goldRatio = 5000;
 
         this.timeBeforeDrop = 3;
         //this.waveChecked = false;
@@ -55,24 +64,29 @@ var app = playground({
         this.waveAsked = false;
         this.gameOn = true;
 
-        this.hit = false;
+        this.hit  = false;
         this.heal = false;
 
         this.loadImages(
             "skulls",
             "timeBar",
             "timeBarFrame",
-            "portal"
+            "portal",
+            "Ship",
+            "Enemy_1_Flight"
         );
 
         this.loadFont("duck4game");
     },
 
     ready: function() {
-        //this.test = new Animation("skulls", 100, 0, 0, 40, 40);
-        //this.test.animate();
+        this.test = new Animation("Ship", 100, 0, 0, 50, 50);
+        this.test.animate();
         this.portal = new Animation("portal", 100, 0, 0, 50, 50);
         this.portal.animate();
+        this.spawner = setInterval(()=>{
+            this.popEnnemy();
+        }, 5000)
     },
 
     option: function() {
@@ -80,15 +94,7 @@ var app = playground({
     },
 
     keydown: function(e) {
-        // if(this.waveAsked && e.key == 'space' && !this.timerOn && this.ptimer.y === 540) {
-        //     this.timerOn = true;
-        //     this.popupTimer();
-        //     //store g
-        //     //console.log("yay")
-        // } else if(this.timeBeforeDrop <= 0 && e.key == 'a'){
-        //     //store g
-        // }
-        // //console.log(e.key)
+
     },
 
     keyup: function(e) {
@@ -105,6 +111,7 @@ var app = playground({
             this.timerOn = true;
             this.popupTimer();
             clearTimeout(this.back);
+            this.dropGold();
         }
     },
 
@@ -117,36 +124,41 @@ var app = playground({
     },
 
     step: function(dt) {
-        if(this.timeBeforeDrop > 0 && this.timerOn){
-            this.timeBeforeDrop -= 1*dt;
-            this.btimer.w = this.timeBeforeDrop*136/30;
-        }else if(this.timeBeforeDrop <= 0) {
-            this.timerOn = false;
-            this.timeBeforeDrop = 30;
-            this.btimer.w = this.timeBeforeDrop*136/30;
-            this.popupTimer();
-            //this.waveAsked = true;
-            this.back = setTimeout(()=>{
-                this.timerOn = true;
+        if(this.gameOn) {
+            this.updateEnnemies(dt);
+            if(this.timeBeforeDrop > 0 && this.timerOn){
+                this.timeBeforeDrop -= 1*dt;
+                this.btimer.w = this.timeBeforeDrop*136/30;
+            } else if (this.timeBeforeDrop <= 0) {
+                this.timerOn = false;
+                this.timeBeforeDrop = 30;
+                this.btimer.w = this.timeBeforeDrop*136/30;
                 this.popupTimer();
-            }, 5000);
+                this.back = setTimeout(()=>{
+                    this.timerOn = true;
+                    this.popupTimer();
+                }, 5000);
+            }
+            this.updateHp();
         }
-        this.updateHp();
     },
 
     render: function() {
         this.layer.clear('#333');
         this.layer.fillStyle("red");
         dr(this.player, this);
-        //dr(this.btimer, this);
-        //dr(this.ptimer, this);
+        this.test.draw(this.player.x, this.player.y);
         dr(this.captain, this);
         this.renderTimer();
+        this.renderBarGold();
         this.renderHp();
         this.portal.draw(this.ptimer.x, this.ptimer.y);
-        this.layer.fillStyle("white");
-        this.layer.font("12px duck4game");
-        this.layer.fillText("Captain", 290, 120);
+        if(!this.captain.show) {
+            this.layer.fillStyle("white");
+            this.layer.font("12px duck4game");
+            this.layer.fillText("Captain", 290, 120);
+        }
+        this.drawEnnemies();
     },
 
     //functions
@@ -188,6 +200,12 @@ var app = playground({
         }
     },
 
+    renderBarGold: function() {
+        var w = this.player.g * 50 / 300;
+        this.layer.fillStyle("yellow");
+        this.layer.fillRect(this.player.x, this.player.y + 60, w, 10);
+    },
+
     renderTimer: function() {
         this.layer.drawImage(this.images["timeBarFrame"], this.width/2-75, 10);
         this.layer.drawImage(this.images["timeBar"], 125, 10);
@@ -216,17 +234,39 @@ var app = playground({
         var i = this.hpTable.length;
         while( i > 0) {
             i--;
-            if(this.hpTable[i].v >= 1){
+            if(this.hpTable[i].v >= 1) {
                 this.hpTable[i].v -= 1;
                 this.updateHp();
                 this.hit = true;
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.hit = false;
                 }, 100);
                 return;
             }
         }
         return 'dead';
+    },
+
+    popEnnemy: function() {
+        var r = Math.floor((Math.random() * 1000) + 1 );
+        //if( r <= 10 ) {
+            this.ennemies.push(new Ennemy());
+        //}
+    },
+
+    updateEnnemies: function(dt) {
+        for(var i = 0; i < this.ennemies.length; i++) {
+            this.ennemies[i].update(dt);
+            if(this.ennemies[i].y > this.height){
+                this.ennemies.splice(i, 1);
+            }
+        }
+    },
+
+    drawEnnemies: function() {
+        for(var i = this.ennemies.length-1; i >= 0; i--) {
+            this.ennemies[i].draw();
+        }
     },
 
     death: function(){
