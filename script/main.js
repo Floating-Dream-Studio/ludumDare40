@@ -62,7 +62,12 @@ var app = playground({
         this.star2 = {
             y: -1200,
         }
-
+        this.play = {
+            x : 275,
+            y : 400,
+            w : 50,
+            h : 50
+        }
         //player's ship and data
         this.player = {
             x: 0,
@@ -103,7 +108,8 @@ var app = playground({
             "Bullet",
             "PLANETES",
             "2GALAXY",
-            "3ETOILES"
+            "3ETOILES",
+            "Frame_GoldBar"
         );
         this.loadFont("duck4game");
     },
@@ -244,6 +250,7 @@ var app = playground({
             this.layer.restore();
             this.layer.fillStyle("red");
             this.layer.fillRect(this.dpopup.x, this.dpopup.y, 300, 300);
+            //draw Button
         }
 
     },
@@ -297,6 +304,7 @@ var app = playground({
         }
         this.layer.fillStyle("yellow");
         this.layer.fillRect(this.player.x + 25, this.player.y + 110, w, 10);
+        di("Frame_GoldBar", this.player.x + 21, this.player.y + 110);
     },
 
     renderTimer: function() {
