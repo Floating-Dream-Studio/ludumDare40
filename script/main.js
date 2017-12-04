@@ -56,6 +56,12 @@ var app = playground({
         this.galaxy2 = {
             y: -1200,
         }
+        this.star1 = {
+            y: 0,
+        }
+        this.star2 = {
+            y: -1200,
+        }
 
         //player's ship and data
         this.player = {
@@ -73,7 +79,8 @@ var app = playground({
         this.lvlCel = 30;
 
         this.maxTime = 15;
-        this.timeBeforeDrop = 3;
+        this.timeBeforeDrop = 15;
+        this.goldRatio = 5000;
         //this.waveChecked = false;
         this.timerOn = true;
         this.waveAsked = false;
@@ -95,7 +102,8 @@ var app = playground({
             "Captain_1_Friendly",
             "Bullet",
             "PLANETES",
-            "2GALAXY"
+            "2GALAXY",
+            "3ETOILES"
         );
         this.loadFont("duck4game");
     },
@@ -148,7 +156,11 @@ var app = playground({
     },
 
     mouseup: function(e) {
-
+        if(    e.x < this.play.x + this.play.w && e.x > this.play.x
+            && e.y < this.play.y + this.play.h && e.y > this.playe.y){
+                this.resetGame();
+                this.gameOn = true;
+            }
     },
 
     step: function(dt) {
@@ -156,12 +168,22 @@ var app = playground({
             this.galaxy1.y += 50*dt;
             this.galaxy2.y += 50*dt;
             if(this.galaxy1.y > this.height) {
-                console.log(2, this.galaxy2.y)
+                //console.log(2, this.galaxy2.y)
                 this.galaxy1.y = this.galaxy2.y - 1200;
             }
             if(this.galaxy2.y > this.height) {
-                console.log(1, this.galaxy1.y)
+                //console.log(1, this.galaxy1.y)
                 this.galaxy2.y = this.galaxy1.y - 1200;
+            }
+            this.star1.y += 60*dt;
+            this.star2.y += 60*dt;
+            if(this.star1.y > this.height) {
+                //console.log(2, this.star2.y)
+                this.star1.y = this.star2.y - 1200;
+            }
+            if(this.star2.y > this.height) {
+                //console.log(1, this.star1.y)
+                this.star2.y = this.star1.y - 1200;
             }
             this.updateEnnemies(dt);
             this.updateBullets(dt);
@@ -175,7 +197,7 @@ var app = playground({
                     this.captainState = "captainFace";
                 }, 1200)
                 this.timeBeforeDrop = this.maxTime;
-                this.btimer.w = this.timeBeforeDrop*136/30;
+                this.btimer.w = this.timeBeforeDrop*136/this.maxTime;
                 this.popupTimer();
                 this.captainSpawn.animate();
                 this.back = setTimeout(()=>{
@@ -192,8 +214,11 @@ var app = playground({
     render: function() {
         this.layer.clear('#333');
         //di("PLANETES", 0, 0);
-        di("2GALAXY", 0, this.galaxy1.y)
-        di("2GALAXY", 0, this.galaxy2.y)
+        di("2GALAXY", 0, this.galaxy1.y);
+        di("2GALAXY", 0, this.galaxy2.y);
+        di("3ETOILES", 0, this.star1.y);
+        di("3ETOILES", 0, this.star2.y);
+
         this.layer.fillStyle("red");
         //dr(this.player, this);
         this.test.draw(this.player.x, this.player.y);
@@ -405,5 +430,21 @@ var app = playground({
         clearInterval(this.spawner);
         clearInterval(this.gun);
         this.gameOn = false;
+    },
+
+    resetGame: function() {
+        this.player.g = 0;
+        this.goldRatio = 5000;
+        this.timerOn = true;
+        this.hpTable[0].v = 2;
+        this.hpTable[1].v = 2;
+        this.hpTable[2].v = 2;
+        this.timeBeforeDrop = 15;
+        this.ennemies = [];
+        this.spawner = setInterval(()=>{
+            this.popEnnemy();
+        }, 5000);
     }
+
+
 })
