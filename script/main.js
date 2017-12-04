@@ -232,11 +232,11 @@ var app = playground({
 
         this.layer.fillStyle("red");
         //dr(this.player, this);
+        di("MOTHERSHIP", 0, 400);
         this.test.draw(this.player.x, this.player.y);
         this.drawBullets();
         //dr(this.captain, this);
         di("DASHBOARD", 0, 0);
-        di("MOTHERSHIP", 0, 400);
         this.renderTimer();
         this.renderBarGold();
         this.renderHp();
