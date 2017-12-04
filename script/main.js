@@ -32,7 +32,7 @@ var app = playground({
         this.captainState = "captainSpawn";
         //ship
         this.ptimer = {
-            x: 200,
+            x: 280,
             y: 650,
             w: 50,
             h: 50,
@@ -113,7 +113,8 @@ var app = playground({
             "Frame_GoldBar",
             "DASHBOARD",
             "Icon_Repeat",
-            "dpopup"
+            "dpopup",
+            "MOTHERSHIP"
         );
         this.loadFont("duck4game");
     },
@@ -235,6 +236,7 @@ var app = playground({
         this.drawBullets();
         //dr(this.captain, this);
         di("DASHBOARD", 0, 0);
+        di("MOTHERSHIP", 0, 400);
         this.renderTimer();
         this.renderBarGold();
         this.renderHp();
