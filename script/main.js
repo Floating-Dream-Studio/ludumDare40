@@ -23,7 +23,7 @@ var app = playground({
         //platteforme(avatar)
         this.captain = {
             x: 275,
-            y: 25,
+            y: 15,
             w: 50,
             h: 50,
             c: "cyan",
@@ -43,7 +43,7 @@ var app = playground({
         //time bar
         this.btimer = {
             x: this.width/2 - (135/2),
-            y: 10,
+            y: 15,
             w: 135,
             h: 10,
             c: "green",
@@ -109,7 +109,8 @@ var app = playground({
             "PLANETES",
             "2GALAXY",
             "3ETOILES",
-            "Frame_GoldBar"
+            "Frame_GoldBar",
+            "DASHBOARD"
         );
         this.loadFont("duck4game");
     },
@@ -230,6 +231,7 @@ var app = playground({
         this.test.draw(this.player.x, this.player.y);
         this.drawBullets();
         //dr(this.captain, this);
+        di("DASHBOARD", 0, 0);
         this.renderTimer();
         this.renderBarGold();
         this.renderHp();
