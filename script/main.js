@@ -50,6 +50,13 @@ var app = playground({
             show: true
         }
 
+        this.galaxy1 = {
+            y: 0,
+        }
+        this.galaxy2 = {
+            y: -1200,
+        }
+
         //player's ship and data
         this.player = {
             x: 0,
@@ -87,9 +94,9 @@ var app = playground({
             "Captain_Display",
             "Captain_1_Friendly",
             "Bullet",
-            "PLANETES"
+            "PLANETES",
+            "2GALAXY"
         );
-
         this.loadFont("duck4game");
     },
 
@@ -146,6 +153,16 @@ var app = playground({
 
     step: function(dt) {
         if(this.gameOn) {
+            this.galaxy1.y += 50*dt;
+            this.galaxy2.y += 50*dt;
+            if(this.galaxy1.y > this.height) {
+                console.log(2, this.galaxy2.y)
+                this.galaxy1.y = this.galaxy2.y - 1200;
+            }
+            if(this.galaxy2.y > this.height) {
+                console.log(1, this.galaxy1.y)
+                this.galaxy2.y = this.galaxy1.y - 1200;
+            }
             this.updateEnnemies(dt);
             this.updateBullets(dt);
             if(this.timeBeforeDrop > 0 && this.timerOn){
@@ -174,7 +191,9 @@ var app = playground({
 
     render: function() {
         this.layer.clear('#333');
-        di("PLANETES", 0, 0);
+        //di("PLANETES", 0, 0);
+        di("2GALAXY", 0, this.galaxy1.y)
+        di("2GALAXY", 0, this.galaxy2.y)
         this.layer.fillStyle("red");
         //dr(this.player, this);
         this.test.draw(this.player.x, this.player.y);
