@@ -64,9 +64,10 @@ var app = playground({
         }
         this.play = {
             x : 275,
-            y : 400,
+            y : 325,
             w : 50,
-            h : 50
+            h : 50,
+            show: true,
         }
         //player's ship and data
         this.player = {
@@ -110,7 +111,9 @@ var app = playground({
             "2GALAXY",
             "3ETOILES",
             "Frame_GoldBar",
-            "DASHBOARD"
+            "DASHBOARD",
+            "Icon_Repeat",
+            "dpopup"
         );
         this.loadFont("duck4game");
     },
@@ -164,7 +167,7 @@ var app = playground({
 
     mouseup: function(e) {
         if(    e.x < this.play.x + this.play.w && e.x > this.play.x
-            && e.y < this.play.y + this.play.h && e.y > this.playe.y){
+            && e.y < this.play.y + this.play.h && e.y > this.play.y){
                 this.resetGame();
                 this.gameOn = true;
             }
@@ -250,9 +253,14 @@ var app = playground({
             this.layer.fillStyle("black")
             this.layer.fillRect(0, 0, this.width, this.height);
             this.layer.restore();
-            this.layer.fillStyle("red");
-            this.layer.fillRect(this.dpopup.x, this.dpopup.y, 300, 300);
-            //draw Button
+            this.layer.fillStyle("white");
+            di("dpopup", this.dpopup.x, this.dpopup.y);
+            this.layer.font('24px duck4game');
+            this.layer.fillText('SCORE', 60, this.play.y);
+            this.layer.fillText('Play again', 60, this.play.y + 35);
+            this.layer.fillStyle("yellow");
+            this.layer.fillText(this.player.g, 250, this.play.y);
+            di("Icon_Repeat", this.play.x, this.play.y);
         }
 
     },
@@ -290,12 +298,12 @@ var app = playground({
     renderHp: function(){
         for(var i = 0; i < this.hpTable.length; i++) {
             if(this.hit) {
-                this.layer.drawImage(this.images["skulls"], 120, 0, 40, 40, 25 + i * 45, 50, 40, 40);
+                this.layer.drawImage(this.images["skulls"], 120, 0, 40, 40, 20 + i * 45, 50, 40, 40);
             } else if (this.heal) {
-                this.layer.drawImage(this.images["skulls"], 160, 0, 40, 40, 25 + i * 45, 50, 40, 40);
+                this.layer.drawImage(this.images["skulls"], 160, 0, 40, 40, 20 + i * 45, 50, 40, 40);
             }
             var t = this.hpTable[i];
-            this.layer.drawImage(this.images["skulls"], t.x, 0, 40, 40, 25 + i * 45, 50, 40, 40);
+            this.layer.drawImage(this.images["skulls"], t.x, 0, 40, 40, 20 + i * 45, 50, 40, 40);
         }
     },
 
